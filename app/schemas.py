@@ -1,11 +1,15 @@
 from datetime import datetime
-
 from pydantic import BaseModel
 
 
 class PostCreateRequest(BaseModel):
     title: str
     body: str
+
+
+class PostUpdateRequest(BaseModel):
+    title: str | None = None
+    body: str | None = None
 
 
 class PostListResponse(BaseModel):
@@ -15,3 +19,6 @@ class PostListResponse(BaseModel):
     body: str
     is_active: bool
     created_at: datetime
+
+    class Config:
+        from_attributes = True
