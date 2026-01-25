@@ -1,42 +1,42 @@
 from fastapi import APIRouter, HTTPException
 from sqlalchemy import select
 
-from app.models import Post
+from app.models import Tag
 from app.database import db_dep
-from app.schemas import PostListResponse, PostCreateRequest, PostUpdateRequest
+from app.schemas import TagListResponse, TagCreateRequest, TagUpdateRequest
 from app.utils import generate_slug
 
 
-router = APIRouter(prefix="/posts", tags=["Posts"])
+router = APIRouter(prefix="/tags", tags=["Tags"])
 
 
-@router.get("/", response_model=list[PostListResponse])
+@router.get("/", response_model=list[TagListResponse])
 async def get_posts(session: db_dep, is_active: bool = None):
-    stmt = select(Post)
+    stmt = select(Tag)
 
     if is_active is not None:
-        stmt = stmt.where(Post.is_active == is_active)
+        stmt = stmt.where(Tag.is_active == is_active)
 
-    stmt = stmt.order_by(Post.created_at.desc())
+    stmt = stmt.order_by(Tag.created_at.desc())
     res = session.execute(stmt)
     return res.scalars().all()
 
 
-@router.get("/{slug}/", response_model=PostListResponse)
+@router.get("/{slug}/", response_model=TagListResponse)
 async def get_post(session: db_dep, slug: str):
-    stmt = select(Post).where(Post.slug.like(f"%{slug}%"))
+    stmt = select(Tag).where(Tag.slug.like(f"%{slug}%"))
     res = session.execute(stmt)
     post = res.scalars().first()
 
     if not post:
-        raise HTTPException(status_code=404, detail="Post not found")
+        raise HTTPException(status_code=404, detail="Tag not found")
 
     return post
 
 
 @router.post("/post/create/")
-async def post_create(session: db_dep, create_data: PostCreateRequest):
-    post = Post(
+async def post_create(session: db_dep, create_data: TagCreateRequest):
+    post = Tag(
         title=create_data.title,
         body=create_data.body,
         slug=generate_slug(create_data.title),
@@ -50,13 +50,13 @@ async def post_create(session: db_dep, create_data: PostCreateRequest):
 
 
 @router.put("/posts/")
-async def post_update(session: db_dep, post_id: int, update_data: PostUpdateRequest):
-    stmt = select(Post).where(Post.id == post_id)
+async def post_update(session: db_dep, post_id: int, update_data: TagUpdateRequest):
+    stmt = select(Tag).where(Tag.id == post_id)
     res = session.execute(stmt)
     post = res.scalars().first()
 
     if not post:
-        raise HTTPException(status_code=404, detail="Post not found")
+        raise HTTPException(status_code=404, detail="Tag not found")
 
     if update_data.title:
         post.title = update_data.title
@@ -76,14 +76,14 @@ async def post_update(session: db_dep, post_id: int, update_data: PostUpdateRequ
 
 @router.patch("/posts/")
 async def post_update_patch(
-    session: db_dep, post_id: int, update_data: PostUpdateRequest
+    session: db_dep, post_id: int, update_data: TagUpdateRequest
 ):
-    stmt = select(Post).where(Post.id == post_id)
+    stmt = select(Tag).where(Tag.id == post_id)
     res = session.execute(stmt)
     post = res.scalars().first()
 
     if not post:
-        raise HTTPException(status_code=404, detail="Post not found")
+        raise HTTPException(status_code=404, detail="Tag not found")
 
     if update_data.title:
         post.title = update_data.title
@@ -103,12 +103,12 @@ async def post_update_patch(
 
 @router.delete("/posts/", status_code=204)
 async def post_delete(session: db_dep, post_id: int):
-    stmt = select(Post).where(Post.id == post_id)
+    stmt = select(Tag).where(Tag.id == post_id)
     res = session.execute(stmt)
     post = res.scalars().first()
 
     if not post:
-        raise HTTPException(status_code=404, detail="Post not found")
+        raise HTTPException(status_code=404, detail="Tag not found")
 
     session.delete(post)
     session.commit()

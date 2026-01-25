@@ -1,5 +1,5 @@
 from fastapi import FastAPI
-from app.routers.posts import router as posts_router
+from app.routers import posts_router, category_router, tag_router
 
 app = FastAPI(
     title="Chesnokdek achchiq yangiliklar",
@@ -7,3 +7,5 @@ app = FastAPI(
 )
 
 app.include_router(posts_router)
+app.include_router(category_router)
+app.include_router(tag_router)

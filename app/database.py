@@ -1,8 +1,9 @@
 import os
-
+from typing import Annotated
 from dotenv import load_dotenv
 from sqlalchemy import create_engine
-from sqlalchemy.orm import sessionmaker, DeclarativeBase
+from sqlalchemy.orm import sessionmaker, DeclarativeBase, Session
+from fastapi import Depends
 
 load_dotenv()
 
@@ -29,3 +30,5 @@ def get_db():
         yield session
     finally:
         session.close()
+
+db_dep = Annotated[Session, Depends(get_db)]
