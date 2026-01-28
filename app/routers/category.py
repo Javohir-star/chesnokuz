@@ -3,7 +3,11 @@ from sqlalchemy import select
 
 from app.models import Category
 from app.database import db_dep
-from app.schemas import CategoryListResponse, CategoryCreateRequest, CategoryUpdateRequest
+from app.schemas import (
+    CategoryListResponse,
+    CategoryCreateRequest,
+    CategoryUpdateRequest,
+)
 from app.utils import generate_slug
 
 
@@ -50,7 +54,9 @@ async def post_create(session: db_dep, create_data: CategoryCreateRequest):
 
 
 @router.put("/posts/")
-async def post_update(session: db_dep, post_id: int, update_data: CategoryUpdateRequest):
+async def post_update(
+    session: db_dep, post_id: int, update_data: CategoryUpdateRequest
+):
     stmt = select(Category).where(Category.id == post_id)
     res = session.execute(stmt)
     post = res.scalars().first()
