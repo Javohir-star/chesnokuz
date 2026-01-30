@@ -9,7 +9,7 @@ async def login(response: Response):
         key="access_token",
         value="fake-token",
         httponly=True,
-        max_age=3600,
+        max_age=100,
     )
     return {"login": True}
 
@@ -36,6 +36,6 @@ async def refresh(response: Response):
         key="access_token",
         value="new-token",
         httponly=True,
-        max_age=3600,
+        max_age=100,
     )
     return {"refresh": True}

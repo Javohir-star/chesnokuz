@@ -1,0 +1,1 @@
+Supported: uz | en | tr (Accept-Language header)

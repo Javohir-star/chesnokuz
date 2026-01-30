@@ -1,6 +1,17 @@
 from datetime import datetime
 
-from sqlalchemy import BigInteger, String, Boolean, Text, DateTime, ForeignKey, func
+from sqlalchemy import (
+    BigInteger,
+    Integer,
+    String,
+    Boolean,
+    Text,
+    DateTime,
+    ForeignKey,
+    func,
+    Table,
+    Column,
+)
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.database import Base
@@ -37,7 +48,7 @@ class User(BaseModel):
     is_deleted: Mapped[bool] = mapped_column(Boolean, default=False)
 
     profession: Mapped["Profession"] = relationship(
-        "Profession", back_populates="users"
+        back_populates="users", lazy="raise_on_sql"
     )
 
     def __repr__(self):
@@ -57,6 +68,11 @@ class Post(BaseModel):
     comments_count: Mapped[int] = mapped_column(BigInteger, default=0)
     mins_read: Mapped[int] = mapped_column(BigInteger, default=0)
     is_active: Mapped[bool] = mapped_column(Boolean, default=True)
+
+    tags: Mapped[list["Tag"]] = relationship(
+        "Tag",
+        back_populates="posts",
+    )
 
     def __repr__(self):
         return f"Post({self.title})"
@@ -79,6 +95,11 @@ class Tag(Base):
     id: Mapped[int] = mapped_column(BigInteger, primary_key=True)
     name: Mapped[str] = mapped_column(String(50))
     slug: Mapped[str] = mapped_column(String(100), unique=True)
+
+    posts: Mapped[list["Post"]] = relationship(
+        "Post",
+        back_populates="tags",
+    )
 
     def __repr__(self):
         return f"Tag({self.name})"
@@ -116,9 +137,56 @@ class PostMedia(Base):
 class Comment(BaseModel):
     __tablename__ = "comments"
 
-    user_id: Mapped[int] = mapped_column(ForeignKey("users.id"), nullable=False)
+    post_id: Mapped[int] = mapped_column(ForeignKey("post.id"))
+    user_id: Mapped[int] = mapped_column(ForeignKey("users.id"), nullable=True)
     text: Mapped[str] = mapped_column(Text)
     is_active: Mapped[bool] = mapped_column(Boolean, default=True)
 
     def __repr__(self):
         return f"Comment({self.text})"
+
+
+class UsersSearch(Base):
+    __tablename__ = "users_search"
+
+    id: Mapped[int] = mapped_column(BigInteger, primary_key=True)
+    term: Mapped[str] = mapped_column(String(50), nullable=False)
+    count: Mapped[int] = mapped_column(Integer, default=0)
+
+    def __repr__(self):
+        return f"UsersSearch({self.term})"
+
+
+class Device(Base):
+    __tablename__ = "devices"
+
+    id: Mapped[int] = mapped_column(BigInteger, primary_key=True)
+    user_agent: Mapped[str] = mapped_column(String(255), nullable=False)
+    last_active: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), nullable=False
+    )
+
+    def __repr__(self):
+        return f"Device({self.user_agent})"
+
+
+class Like(Base):
+    __tablename__ = "likes"
+
+    id: Mapped[int] = mapped_column(BigInteger, primary_key=True)
+    device_id: Mapped[int] = mapped_column(ForeignKey("devices.id"), nullable=False)
+    post_id: Mapped[int] = mapped_column(ForeignKey("post.id"), nullable=False)
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), default=func.now()
+    )
+
+    def __repr__(self):
+        return f"Like({self.id})"
+
+
+post_tag_m2_table = Table(
+    "post_tag",
+    Base.metadata,
+    Column("post_id", ForeignKey("post.id"), primary_key=True),
+    Column("tag_id", ForeignKey("tags.id"), primary_key=True),
+)

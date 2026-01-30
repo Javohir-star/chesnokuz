@@ -141,6 +141,8 @@ class UserListResponse(BaseModel):
 
 class UserCreateRequest(BaseModel):
     name: str | None = None
+    title: str | None = None
+    body: str | None = None
 
 
 class UserUpdateRequest(BaseModel):
@@ -152,9 +154,7 @@ class PostCreate(BaseModel):
     title: str
     body: str
 
-    model_config = {
-        "from_attributes": True
-    }
+    model_config = {"from_attributes": True}
 
 
 class PostResponse(BaseModel):
@@ -164,6 +164,4 @@ class PostResponse(BaseModel):
     is_active: bool
     created_at: datetime
 
-    model_config = {
-        "from_attributes": True
-    }
+    model_config = {"from_attributes": True}

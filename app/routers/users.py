@@ -54,9 +54,7 @@ async def post_create(session: db_dep, create_data: UserCreateRequest):
 
 
 @router.put("/posts/")
-async def post_update(
-    session: db_dep, post_id: int, update_data: UserCreateRequest
-):
+async def post_update(session: db_dep, post_id: int, update_data: UserCreateRequest):
     stmt = select(User).where(User.id == post_id)
     res = session.execute(stmt)
     post = res.scalars().first()

@@ -1,9 +1,5 @@
 from app.database import SessionLocal
-from app.models import (
-    User, Post, Comment,
-    Category, Tag,
-    Profession, Media
-)
+from app.models import User, Post, Comment, Category, Tag, Profession, Media
 
 db = SessionLocal()
 
