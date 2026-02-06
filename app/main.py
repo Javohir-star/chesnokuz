@@ -4,7 +4,9 @@ from app.routers import (
     category_router,
     tag_router,
     users_router,
+    weather_router,
     auth_router,
+    lesson_router
 )
 
 app = FastAPI(
@@ -16,4 +18,6 @@ app.include_router(posts_router)
 app.include_router(category_router)
 app.include_router(tag_router)
 app.include_router(users_router)
+app.include_router(weather_router)
 app.include_router(auth_router)
+app.include_router(lesson_router)
