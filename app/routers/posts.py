@@ -1,7 +1,7 @@
 from fastapi import APIRouter, HTTPException
 from sqlalchemy import select
 
-from app.models import Post, post_tag_m2_table, Tag
+from app.models import Post, post_tag_m2m_table, Tag
 from app.database import db_dep
 from app.schemas import PostListResponse, PostCreateRequest, PostUpdateRequest
 from app.utils import generate_slug
@@ -19,8 +19,8 @@ async def get_posts(
 ):
     stmt = (
         select(Post)
-        .join(post_tag_m2_table, Post.id == post_tag_m2_table.c.post_id)
-        .join(Tag, post_tag_m2_table.c.tag_id == Tag.id)
+        .join(post_tag_m2m_table, Post.id == post_tag_m2m_table.c.post_id)
+        .join(Tag, post_tag_m2m_table.c.tag_id == Tag.id)
     )
 
     if is_active is not None:

@@ -1,0 +1,10 @@
+from fastapi import APIRouter
+
+from .register import router as register_router
+from .gwt import router as gwt_auth_router
+
+
+router = APIRouter(prefix="/auth", tags=["Auth"])
+
+router.include_router(register_router)
+router.include_router(gwt_auth_router)
