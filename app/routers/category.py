@@ -6,7 +6,7 @@ from app.models import Category
 from app.schemas import CategoryCreateRequest, CategoryListResonse
 from app.utils import generate_slug
 
-router = APIRouter(prefix="/category", tags=["Category"])
+router = APIRouter(prefix="/categories", tags=["Categories"])
 
 
 @router.get("/list/", response_model=list[CategoryListResonse])

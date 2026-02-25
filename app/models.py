@@ -66,6 +66,7 @@ class User(BaseModel):
 class Post(BaseModel):
     __tablename__ = "post"
 
+    id: Mapped[int] = mapped_column(BigInteger, primary_key=True)
     user_id: Mapped[int] = mapped_column(ForeignKey("users.id"), nullable=False)
     title: Mapped[str] = mapped_column(String(255))
     slug: Mapped[str] = mapped_column(String(100), unique=True)
@@ -95,6 +96,10 @@ class Category(Base):
     id: Mapped[int] = mapped_column(BigInteger, primary_key=True)
     name: Mapped[str] = mapped_column(String(50))
     slug: Mapped[str] = mapped_column(String(100), unique=True)
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), default=func.now())
+    updated_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), default=func.now(), onupdate=func.now())
 
     posts: Mapped[list["Post"]] = relationship(
         back_populates="category", lazy="raise_on_sql"
@@ -110,6 +115,10 @@ class Tag(Base):
     id: Mapped[int] = mapped_column(BigInteger, primary_key=True)
     name: Mapped[str] = mapped_column(String(50))
     slug: Mapped[str] = mapped_column(String(100), unique=True)
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), default=func.now())
+    updated_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), default=func.now(), onupdate=func.now())
 
     posts: Mapped[list["Post"]] = relationship(
         secondary="post_tag", back_populates="tags", lazy="raise_on_sql"
@@ -124,6 +133,10 @@ class Profession(Base):
 
     id: Mapped[int] = mapped_column(BigInteger, primary_key=True)
     name: Mapped[str] = mapped_column(String(50))
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), default=func.now())
+    updated_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), default=func.now(), onupdate=func.now())
 
     users: Mapped[list["User"]] = relationship(
         back_populates="profession", lazy="raise_on_sql"
@@ -138,6 +151,10 @@ class Media(Base):
 
     id: Mapped[int] = mapped_column(BigInteger, primary_key=True)
     url: Mapped[str] = mapped_column(String(100))
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), default=func.now())
+    updated_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), default=func.now(), onupdate=func.now())
 
     def __repr__(self):
         return f"Media({self.url})"
@@ -153,6 +170,7 @@ class PostMedia(Base):
 class Comment(BaseModel):
     __tablename__ = "comments"
 
+    id: Mapped[int] = mapped_column(BigInteger, primary_key=True)
     post_id: Mapped[int] = mapped_column(ForeignKey("post.id"))
     user_id: Mapped[int] = mapped_column(ForeignKey("users.id"), nullable=True)
     text: Mapped[str] = mapped_column(Text)

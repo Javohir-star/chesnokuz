@@ -16,5 +16,5 @@ __all__ = [
     "weather_router",
     "users_router",
     "lesson_router",
-    "auth_router",
+    "auth_router"
 ]
